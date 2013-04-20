@@ -1,102 +1,102 @@
-var app = window.app ||  {};
-
 window.onload = function() {
-  app.startTimer = document.getElementById('start-timer');
-  app.stopTimer = document.getElementById('stop-timer');
-  app.countdown = document.getElementById('countdown');
-  app.currentInterval;
+  var startTimer = document.getElementById('start-timer'),
+      stopTimer = document.getElementById('stop-timer'),
+      countdown = document.getElementById('countdown'),
+      currentInterval,
+      debug = false;
 
-  app.init = function() {
-    app.startTimer.addEventListener('click', app.beginTimer, false);
-    app.stopTimer.addEventListener('click', app.pauseTimer, false);
-    app.resetWorkTime();
+  var init = function() {
+    startTimer.addEventListener('click', beginTimer, false);
+    stopTimer.addEventListener('click', pauseTimer, false);
+    resetWorkTime();
   };
 
   // work for 20 mins
-  app.resetWorkTime = function() {
-    app.workTimeout = app.debug ? 5000 : 1200000;
-    app.currentCount = 0;
-    app.minsToGo = app.debug ? 0 : 19;
-    app.secsToGo = app.debug ? 5 : 59;
-    app.startTime = app.debug ? "00:05" : "20:00";
-    app.timeType = "WORK";
+  var resetWorkTime = function() {
+    workTimeout = debug ? 5000 : 1200000;
+    currentCount = 0;
+    minsToGo = debug ? 0 : 19;
+    secsToGo = debug ? 5 : 59;
+    startTime = debug ? "00:05" : "20:00";
+    timeType = "WORK";
   };
 
   // break for 10
-  app.resetBreakTime = function() {
-    app.breakTimeout = 600000;
-    app.currentCount = 0;
-    app.minsToGo = 9;
-    app.secsToGo = 59;
-    app.startTime = "10:00";
-    app.timeType = "BREAK";
+  var resetBreakTime = function() {
+    breakTimeout = 600000;
+    currentCount = 0;
+    minsToGo = 9;
+    secsToGo = 59;
+    startTime = "10:00";
+    timeType = "BREAK";
   };
 
-  app.beginTimer = function() {
-    hide(app.startTimer);
-    show(app.stopTimer);
+  var beginTimer = function() {
+    hide(startTimer);
+    show(stopTimer);
 
-    var existingTime = countdown.innerText === '' ? app.startTime : countdown.innerText;
+    var existingTime = countdown.innerText === '' ? startTime : countdown.innerText;
     updateTime(existingTime);
 
-    app.currentInterval = window.setInterval(app.incrementTimer, 1000);
+    currentInterval = window.setInterval(incrementTimer, 1000);
   };
 
-  app.pauseTimer = function() {
-    window.clearInterval(app.currentInterval);
-    switch(app.timeType) {
+  var pauseTimer = function() {
+    window.clearInterval(currentInterval);
+    switch(timeType) {
       case 'WORK':
-        show(app.startTimer);
-        hide(app.stopTimer);
+        show(startTimer);
+        hide(stopTimer);
         break;
       case 'BREAK':
-        hide(app.startTimer);
-        show(app.stopTimer);
+        hide(startTimer);
+        show(stopTimer);
         break;
     }
   };
 
-  app.incrementTimer = function() {
-    app.currentCount = app.currentCount+1000;
-    app.secsToGo--;
+  var incrementTimer = function() {
+    currentCount = currentCount+1000;
+    secsToGo--;
 
-    var secondsDisplay = app.secsToGo < 10 ? "0" + app.secsToGo : app.secsToGo;
-    var minsDisplay = app.minsToGo;
-    if(app.secsToGo < 1) {
-      app.secsToGo = 59;
-      app.minsToGo--;
+    var secondsDisplay = secsToGo < 10 ? "0" + secsToGo : secsToGo,
+        minsDisplay = minsToGo;
 
-      minsDisplay = app.minsToGo < 1 ? "00" : app.minsToGo;
+    if(secsToGo < 1) {
+      secsToGo = 59;
+      minsToGo--;
+
+      minsDisplay = minsToGo < 1 ? "00" : minsToGo;
     }
 
     updateTime(minsDisplay + ':' + secondsDisplay);
 
-    switch(app.timeType) {
+    switch(timeType) {
       case 'WORK':
-        if(app.currentCount >= app.workTimeout) {
-          window.clearInterval(app.currentInterval);
-          app.resetBreakTime();
-          app.timesUp();
+        if(currentCount >= workTimeout) {
+          window.clearInterval(currentInterval);
+          resetBreakTime();
+          timesUp();
         }
         break;
       case 'BREAK':
-        if(app.currentCount >= app.breakTimeout) {
-          window.clearInterval(app.currentInterval);
-          app.resetWorkTime();
-          app.timesUp();
+        if(currentCount >= breakTimeout) {
+          window.clearInterval(currentInterval);
+          resetWorkTime();
+          timesUp();
         }
         break;
     }
   };
   
-  app.timesUp = function() {
-    app.yeah(function() {
-      app.currentInterval = window.setInterval(app.incrementTimer, 1000);
-      updateTime(app.startTime);
+  var timesUp = function() {
+    yeah(function() {
+      currentInterval = window.setInterval(incrementTimer, 1000);
+      updateTime(startTime);
     });
   };
 
-  app.yeah = function(done) {
+  var yeah = function(done) {
     var audio = document.getElementById('audio'),
         href = audio.children[0].href,
        newAudio = new Audio();
@@ -111,7 +111,7 @@ window.onload = function() {
 
   var updateTime = function(newTime) {
     countdown.innerText = newTime;
-    document.title = newTime 
+    document.title = newTime;
   };
   
   var hide = function(el) {
@@ -122,5 +122,5 @@ window.onload = function() {
     el.style.display = 'inline-block';
   };
 
-  app.init();
+  init();
 };
