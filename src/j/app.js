@@ -14,11 +14,11 @@ window.onload = function() {
 
   // work for 20 mins
   app.resetWorkTime = function() {
-    app.workTimeout = 1200000;
+    app.workTimeout = app.debug ? 5000 : 1200000;
     app.currentCount = 0;
-    app.minsToGo = 19;
-    app.secsToGo = 59;
-    app.startTime = "20:00";
+    app.minsToGo = app.debug ? 0 : 19;
+    app.secsToGo = app.debug ? 5 : 59;
+    app.startTime = app.debug ? "00:05" : "20:00";
     app.timeType = "WORK";
   };
 
@@ -36,7 +36,7 @@ window.onload = function() {
     hide(app.startTimer);
     show(app.stopTimer);
 
-    var existingTime = countdown.innerText === '' ? '20:00' : countdown.innerText;
+    var existingTime = countdown.innerText === '' ? app.startTime : countdown.innerText;
     updateTime(existingTime);
 
     app.currentInterval = window.setInterval(app.incrementTimer, 1000);
@@ -92,9 +92,8 @@ window.onload = function() {
   app.timesUp = function() {
     app.yeah(function() {
       app.currentInterval = window.setInterval(app.incrementTimer, 1000);
-      alert('it worked, yeaaaahhhhhhhhh!');
+      updateTime(app.startTime);
     });
-    updateTime(app.startTime);
   };
 
   app.yeah = function(done) {
