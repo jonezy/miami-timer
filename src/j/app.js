@@ -3,7 +3,7 @@ window.onload = function() {
       stopTimer = document.getElementById('stop-timer'),
       countdown = document.getElementById('countdown'),
       horatio = document.getElementById('horatio'),
-      startDateTime, currentInterval, endDateTime = null, debug = false;
+      startDateTime, currentInterval, debug = false;
 
   var init = function() {
     startTimer.addEventListener('click', beginTimer, false);
@@ -36,8 +36,6 @@ window.onload = function() {
     show(stopTimer);
 
     startDateTime = new Date();
-    endDateTime = new Date(startDateTime);
-    endDateTime.setMinutes(startDateTime.getMinutes() + duration);
 
     updateTime(countdown.innerText === '' ? startTime : countdown.innerText);
 
