@@ -79,8 +79,8 @@ window.onload = function() {
     // this is where we actually restart :)
     yeah(function() {
       hide(horatio);
-      if(timeType == 'WORK') resetWorkTime();
-      else resetBreakTime();
+      if(timeType == 'WORK') resetBreakTime();
+      else resetWorkTime();
       currentInterval = window.setInterval(incrementTimer, 1000);
       updateTime(startTime);
     });
