@@ -3,8 +3,7 @@ window.onload = function() {
       stopTimer = document.getElementById('stop-timer'),
       countdown = document.getElementById('countdown'),
       horatio = document.getElementById('horatio'),
-      startDateTime,
-      currentInterval, endDateTime = null, debug = true;
+      startDateTime, currentInterval, endDateTime = null, debug = false;
 
   var init = function() {
     startTimer.addEventListener('click', beginTimer, false);
@@ -47,15 +46,12 @@ window.onload = function() {
 
   var pauseTimer = function() {
     window.clearInterval(currentInterval);
-    switch(timeType) {
-      case 'WORK':
-        show(startTimer);
-        hide(stopTimer);
-        break;
-      case 'BREAK':
-        hide(startTimer);
-        show(stopTimer);
-        break;
+    if(timeType === 'WORK') {
+      show(startTimer);
+      hide(stopTimer);
+    } else {
+      hide(startTimer);
+      show(stopTimer);
     }
   };
 
@@ -66,7 +62,7 @@ window.onload = function() {
 
     minsDisplay = minsToGo-diff.minutes;
     secondsDisplay = secsToGo-diff.seconds;
-    console.log(diff.minutes, diff.seconds);
+
     if(parseInt(diff.minutes) === duration && diff.seconds === 0) {
       window.clearInterval(currentInterval);
       updateTime("00:00");
@@ -76,11 +72,10 @@ window.onload = function() {
       if(secondsDisplay.toString().length === 1) {
         secondsDisplay = ("0" + secondsDisplay).toString();
       }
-
       updateTime(minsDisplay + ':' + secondsDisplay);
     }
   };
-  
+
   var timesUp = function() {
     show(horatio);
     // this is where we actually restart :)
@@ -95,24 +90,24 @@ window.onload = function() {
 
   var yeah = function(done) {
     var audio = document.getElementById('audio'),
-        href = audio.children[0].href,
-        newAudio = new Audio();
+    href = audio.children[0].href,
+    newAudio = new Audio();
 
-   if(done)
-     newAudio.addEventListener('ended', done, false);
+    if(done)
+      newAudio.addEventListener('ended', done, false);
 
-   newAudio.src = href;
-   audio.appendChild(newAudio);
-   newAudio.play();
+    newAudio.src = href;
+    audio.appendChild(newAudio);
+    newAudio.play();
   };
 
   var updateTime = function(newTime) {
     countdown.innerText = newTime;
     document.title = newTime;
   };
-  
+
   var hide = function(el) {
-   el.style.display = 'none'; 
+    el.style.display = 'none'; 
   };
 
   var show = function(el) {
