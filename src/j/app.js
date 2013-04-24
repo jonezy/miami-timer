@@ -2,8 +2,9 @@ window.onload = function() {
   var startTimer = document.getElementById('start-timer'),
       stopTimer = document.getElementById('stop-timer'),
       countdown = document.getElementById('countdown'),
-      currentInterval,
-      debug = false;
+      horatio = document.getElementById('horatio'),
+      startDateTime,
+      currentInterval, endDateTime = null, debug = true;
 
   var init = function() {
     startTimer.addEventListener('click', beginTimer, false);
@@ -11,32 +12,35 @@ window.onload = function() {
     resetWorkTime();
   };
 
-  // work for 20 mins
+  // work time.
   var resetWorkTime = function() {
-    workTimeout = debug ? 5000 : 1200000;
-    currentCount = 0;
-    minsToGo = debug ? 0 : 19;
-    secsToGo = debug ? 5 : 59;
-    startTime = debug ? "00:05" : "20:00";
+    duration = debug ? 1 : 25;
+    minsToGo = debug ? 0 : 24;
+    secsToGo = 60;
+    startTime = debug ? "01:00" : "25:00";
     timeType = "WORK";
+    startDateTime = new Date();
   };
 
-  // break for 10
+  // break time.
   var resetBreakTime = function() {
-    breakTimeout = 600000;
-    currentCount = 0;
-    minsToGo = 9;
-    secsToGo = 59;
-    startTime = "10:00";
+    duration = debug ? 1 : 5;
+    minsToGo = debug ? 0 : 4;
+    secsToGo = 60;
+    startTime = debug ? "01:00" : "5:00";
     timeType = "BREAK";
+    startDateTime = new Date();
   };
 
   var beginTimer = function() {
     hide(startTimer);
     show(stopTimer);
 
-    var existingTime = countdown.innerText === '' ? startTime : countdown.innerText;
-    updateTime(existingTime);
+    startDateTime = new Date();
+    endDateTime = new Date(startDateTime);
+    endDateTime.setMinutes(startDateTime.getMinutes() + duration);
+
+    updateTime(countdown.innerText === '' ? startTime : countdown.innerText);
 
     currentInterval = window.setInterval(incrementTimer, 1000);
   };
@@ -56,41 +60,34 @@ window.onload = function() {
   };
 
   var incrementTimer = function() {
-    currentCount = currentCount+1000;
-    secsToGo--;
+    var currentDate = new Date(),
+        minsDisplay, secondsDisplay,
+        diff = TimeDiff(startDateTime, currentDate);
 
-    var secondsDisplay = secsToGo < 10 ? "0" + secsToGo : secsToGo,
-        minsDisplay = minsToGo;
+    minsDisplay = minsToGo-diff.minutes;
+    secondsDisplay = secsToGo-diff.seconds;
+    console.log(diff.minutes, diff.seconds);
+    if(parseInt(diff.minutes) === duration && diff.seconds === 0) {
+      window.clearInterval(currentInterval);
+      updateTime("00:00");
+      timesUp();
+    } else {
+      if(minsDisplay === 0) minsDisplay = "00";
+      if(secondsDisplay.toString().length === 1) {
+        secondsDisplay = ("0" + secondsDisplay).toString();
+      }
 
-    if(secsToGo < 1) {
-      secsToGo = 59;
-      minsToGo--;
-
-      minsDisplay = minsToGo < 1 ? "00" : minsToGo;
-    }
-
-    updateTime(minsDisplay + ':' + secondsDisplay);
-
-    switch(timeType) {
-      case 'WORK':
-        if(currentCount >= workTimeout) {
-          window.clearInterval(currentInterval);
-          resetBreakTime();
-          timesUp();
-        }
-        break;
-      case 'BREAK':
-        if(currentCount >= breakTimeout) {
-          window.clearInterval(currentInterval);
-          resetWorkTime();
-          timesUp();
-        }
-        break;
+      updateTime(minsDisplay + ':' + secondsDisplay);
     }
   };
   
   var timesUp = function() {
+    show(horatio);
+    // this is where we actually restart :)
     yeah(function() {
+      hide(horatio);
+      if(timeType == 'WORK') resetWorkTime();
+      else resetBreakTime();
       currentInterval = window.setInterval(incrementTimer, 1000);
       updateTime(startTime);
     });
@@ -99,14 +96,14 @@ window.onload = function() {
   var yeah = function(done) {
     var audio = document.getElementById('audio'),
         href = audio.children[0].href,
-       newAudio = new Audio();
+        newAudio = new Audio();
+
+   if(done)
+     newAudio.addEventListener('ended', done, false);
 
    newAudio.src = href;
    audio.appendChild(newAudio);
    newAudio.play();
-
-   if(done)
-     newAudio.addEventListener('ended', done, false);
   };
 
   var updateTime = function(newTime) {
@@ -120,6 +117,17 @@ window.onload = function() {
 
   var show = function(el) {
     el.style.display = 'inline-block';
+  };
+
+  var TimeDiff = function(earlierDate,laterDate) {
+    var nTotalDiff = laterDate.getTime() - earlierDate.getTime();
+    var oDiff = new Object();
+
+    oDiff.minutes = Math.floor(nTotalDiff/1000/60);
+    nTotalDiff -= oDiff.minutes*1000*60;
+    oDiff.seconds = Math.floor(nTotalDiff/1000);
+
+    return oDiff;
   };
 
   init();
