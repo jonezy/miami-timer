@@ -23,10 +23,10 @@ window.onload = function() {
 
   // break time.
   var resetBreakTime = function() {
-    duration = debug ? 1 : 5;
-    minsToGo = debug ? 0 : 4;
+    duration = debug ? 2 : 5;
+    minsToGo = debug ? 1 : 4;
     secsToGo = 60;
-    startTime = debug ? "01:00" : "5:00";
+    startTime = debug ? "02:00" : "5:00";
     timeType = "BREAK";
     startDateTime = new Date();
   };
