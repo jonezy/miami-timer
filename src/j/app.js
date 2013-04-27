@@ -3,7 +3,7 @@ window.onload = function() {
       stopTimer = document.getElementById('stop-timer'),
       countdown = document.getElementById('countdown'),
       horatio = document.getElementById('horatio'),
-      startDateTime, currentInterval, debug = false;
+      startDateTime, currentInterval, debug = true;
 
   var init = function() {
     startTimer.addEventListener('click', beginTimer, false);
@@ -67,6 +67,7 @@ window.onload = function() {
       timesUp();
     } else {
       if(minsDisplay === 0) minsDisplay = "00";
+      if(minsDisplay.toString.length === 1) minsDisplay = ("0" + minsDisplay).toString();
       if(secondsDisplay.toString().length === 1) {
         secondsDisplay = ("0" + secondsDisplay).toString();
       }
