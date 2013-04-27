@@ -3,11 +3,11 @@ window.onload = function() {
       stopTimer = document.getElementById('stop-timer'),
       countdown = document.getElementById('countdown'),
       horatio = document.getElementById('horatio'),
-      startDateTime, currentInterval, debug = true;
+      startDateTime, currentInterval, debug = false;
 
   var init = function() {
+    stopTimer.addEventListener('click',startOver, false);
     startTimer.addEventListener('click', beginTimer, false);
-    stopTimer.addEventListener('click', pauseTimer, false);
     resetWorkTime();
   };
 
@@ -30,6 +30,11 @@ window.onload = function() {
     timeType = "BREAK";
     startDateTime = new Date();
   };
+  
+  var startOver = function() {
+    resetWorkTime();
+    beginTimer();
+  };
 
   var beginTimer = function() {
     hide(startTimer);
@@ -40,17 +45,6 @@ window.onload = function() {
     updateTime(countdown.innerText === '' ? startTime : countdown.innerText);
 
     currentInterval = window.setInterval(incrementTimer, 1000);
-  };
-
-  var pauseTimer = function() {
-    window.clearInterval(currentInterval);
-    if(timeType === 'WORK') {
-      show(startTimer);
-      hide(stopTimer);
-    } else {
-      hide(startTimer);
-      show(stopTimer);
-    }
   };
 
   var incrementTimer = function() {
@@ -67,7 +61,7 @@ window.onload = function() {
       timesUp();
     } else {
       if(minsDisplay === 0) minsDisplay = "00";
-      if(minsDisplay.toString.length === 1) minsDisplay = ("0" + minsDisplay).toString();
+      if(minsDisplay.toString().length === 1) minsDisplay = ("0" + minsDisplay).toString();
       if(secondsDisplay.toString().length === 1) {
         secondsDisplay = ("0" + secondsDisplay).toString();
       }
